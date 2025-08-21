@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: evidently-ingress
+  annotations:
+    # Uncomment if using NGINX Ingress
+    # kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: evidently.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: evidently-service
+                port:
+                  number: 8000

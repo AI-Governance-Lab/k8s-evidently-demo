@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evidently
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: evidently
+  template:
+    metadata:
+      labels:
+        app: evidently
+    spec:
+      containers:
+        - name: evidently
+          image: evidentlyai/evidently:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          # Basic health checks (tcpSocket avoids assuming a specific HTTP path)
+          readinessProbe:
+            tcpSocket:
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            # If the image supports non-root, uncomment:
+            # runAsNonRoot: true
+            # runAsUser: 1000
