@@ -185,3 +185,8 @@ kubectl delete namespace evidently
 - Add Prometheus exporter for continuous metrics
 - Create Helm chart
 - Build Grafana dashboards
+
+---
+
+📌 Notes  
+This repository is maintained as part of my personal learning and PoC development for AI Governance.
