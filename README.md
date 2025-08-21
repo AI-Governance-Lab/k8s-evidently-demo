@@ -1,6 +1,6 @@
-# k8s-evidently-demo
+# Evidently AI on Kubernetes — Demo
 
-📊 Evidently AI on Kubernetes — Deployment demo.
+📊 Run Evidently AI as a service on Kubernetes (Minikube, AKS, EKS, GKE) to monitor data drift, quality, and performance.
 
 This repository provides Kubernetes manifests to run [Evidently AI](https://github.com/evidentlyai/evidently) as a service inside your cluster (EKS, GKE, AKS, Minikube, etc.).
 You can connect it to any AI Agent or ML model (RAG, Ollama, FastAPI, etc.) to monitor model performance, detect data drift, and generate reports.
