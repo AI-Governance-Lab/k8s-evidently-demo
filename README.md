@@ -5,9 +5,23 @@
 This repository provides Kubernetes manifests to run [Evidently AI](https://github.com/evidentlyai/evidently) as a service inside your cluster (EKS, GKE, AKS, Minikube, etc.).
 You can connect it to any AI Agent or ML model (RAG, Ollama, FastAPI, etc.) to monitor model performance, detect data drift, and generate reports.
 
+<a id="for-managers"></a>
+
+## For managers: AI governance context
+This demo helps create operational evidence for AI governance and monitoring:
+- What it is: Evidently focuses on model/data monitoring and reporting (drift, data quality, performance), producing auditable artifacts and dashboards.
+- Why it matters: Continuous monitoring supports “measure and manage” functions in governance programs and reduces model risk in production.
+- How it maps to frameworks:
+  - EU AI Act: Supports risk management, data governance, technical documentation, logging, and post-market monitoring obligations (esp. high-risk systems).
+  - NIST AI RMF 1.0: Strongly aligned to Measure and Manage; outputs inform Govern and Map (roles, risk register, system context).
+  - ISO/IEC 42001 (AI Management System): Contributes to operational controls, KPIs, and continual improvement evidence for audits.
+  - GDPR: Enables accountability via logging and audit trails; pair with data minimization, pseudonymization, and role-based access.
+- What it does not replace: Policies, human oversight, DPIAs, or model documentation (e.g., model cards). Use alongside broader Responsible AI controls.
+
 ---
 
 ## Index
+- [For managers: AI governance context](#for-managers)
 - [Quickstart](#quickstart)
   - [0. Prerequisites](#0-prerequisites)
   - [1. Clone repo](#1-clone-repo)
@@ -99,23 +113,23 @@ Any AI agent or ML service can send data to Evidently:
 ## 🏛️ Architecture
 ```mermaid
 flowchart TB
-  %% Clients
-  U[User / Stakeholders]
-  DS[Data Scientist / Engineer]
+  %% Roles
+  U["User / Stakeholders"]
+  DS["Data Scientist / Engineer"]
 
   %% Cluster
-  subgraph K8s[Kubernetes Cluster]
-    A[Evidently Service\n(evidentlyai/evidently:latest)]
-    SVC[Service\n(NodePort: 30080)]
-    IG[Ingress Controller\n(Optional)]
-    AG[AI Agent / Model API\n(FastAPI / Ollama / etc.)]
-    PVC[(Persistent Volume / Storage)\nReports & Logs]
-    EXP[Prometheus Exporter\n(Optional)]
+  subgraph K8s["Kubernetes Cluster"]
+    A["Evidently Service<br/>(evidentlyai/evidently:latest)"]
+    SVC["Service<br/>(NodePort: 30080)"]
+    IG["Ingress Controller<br/>(Optional)"]
+    AG["AI Agent / Model API<br/>(FastAPI / Ollama / etc.)"]
+    PVC["Persistent Volume / Storage<br/>Reports & Logs"]
+    EXP["Prometheus Exporter<br/>(Optional)"]
   end
 
   %% Observability
-  G[Grafana Dashboards\n(Optional)]
-  PM[Prometheus\n(Optional)]
+  G["Grafana Dashboards<br/>(Optional)"]
+  PM["Prometheus<br/>(Optional)"]
 
   %% Flows
   U -->|HTTP| IG
@@ -128,22 +142,28 @@ flowchart TB
   A -.->|/metrics| EXP
   EXP --> PM --> G
 
-  %% Notes
+  %% Styling
   classDef opt fill:#eef6ff,stroke:#a3c4f3,color:#1c3d5a;
-  class IG,EXP opt
+  class IG,EXP,G,PM opt
 ```
 
 <a id="ai-governance"></a>
 
 ## 🛡️ AI Governance Considerations
-- Data governance: structure input/output logs, define schemas, and version datasets used for reports.
-- PII and security: add PII redaction before logging; restrict access via network policies and RBAC.
-- Drift and performance monitoring: track data drift, quality, and performance metrics; set thresholds and alerts.
-- Observability: expose Prometheus metrics (optional) and build Grafana dashboards for continuous visibility.
-- Lineage and reproducibility: persist reports and configs in storage; include model/version metadata.
-- Compliance and audit: retain reports and event logs; ensure time-stamped artifacts and access logs.
-- Change management: review/approve metric thresholds and dashboards; document changes in Git.
-- Incident response: define alert routes and on-call; add runbooks for remediation.
+- Risk management and monitoring
+  - EU AI Act: supports post-market monitoring, logging, and technical documentation for high-risk AI. Use Evidently reports as auditable artifacts.
+  - NIST AI RMF: aligns with Measure/Manage functions (metrics, monitoring, response). Feed outcomes into Govern/Map (roles, risk register, system context).
+  - ISO/IEC 42001: contributes operational controls for KPIs, continuous improvement, and evidence for audits.
+- Data governance, privacy, and security
+  - Define schemas for inputs/outputs; version datasets used for reports.
+  - Apply data minimization and PII redaction/pseudonymization before logging. Restrict access with RBAC/NetworkPolicies.
+  - Observe retention/erasure policies (e.g., GDPR). Encrypt data at rest/in transit as required.
+- Quality, drift, and performance
+  - Track drift, data quality, and performance metrics. Set thresholds and alerts. Investigate outliers and regressions.
+- Lineage, reproducibility, and auditability
+  - Persist reports and configs; store model/version metadata; timestamp artifacts and keep change logs.
+- Operations and incident response
+  - Define alert routes and on-call; add runbooks; test rollback/fallback strategies. Integrate with Prometheus/Grafana for continuous visibility.
 
 <a id="cleanup"></a>
 
@@ -164,4 +184,4 @@ kubectl delete namespace evidently
 ## 🛠️ Next steps
 - Add Prometheus exporter for continuous metrics
 - Create Helm chart
-- Build Grafana
+- Build Grafana dashboards
